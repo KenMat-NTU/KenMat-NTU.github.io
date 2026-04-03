@@ -1,11 +1,10 @@
 ---
-title: "NeuroLink AI: Next-Generation Brain-Computer Interfaces"
-date: 2024-02-01
-authors: ["Dr. Sarah Kim", "me", "michael-chen-postdoc", "emily-davis-phd"]
+title: "Machine-learning-assisted mechanistic model development for chemical and pharmaceutical process design"
+date: 2026-04-01
+authors: ["ken"]
 tags:
-  - Neuroscience
-  - Brain-Computer Interface
-  - Machine Learning
+  - Pharmaceutical Engineering
+  - Particle Engineering
 featured: true
 summary: "Developing AI-powered brain-computer interfaces that can decode complex neural signals to restore mobility and communication for patients with neurological disorders."
 image:

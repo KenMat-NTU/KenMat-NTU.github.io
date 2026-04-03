@@ -68,9 +68,9 @@ sections:
           team_size: 1
           publications: 0
           #funding: $2.5M NSF/NIH
-          cta:
-            text: Explore Projects
-            url: /research/computational-biology
+          #cta:
+           # text: Explore Projects
+           # url: /research/computational-biology
             
         - name: Sustainability Engineering
           description: Designing sustainable processes and systems based on uncertainty-conscious techno-economic assessment (TEA) and life-cycle assessment (LCA)
@@ -80,9 +80,9 @@ sections:
           team_size: 0
           publications: 0
           #funding: $1.8M NSF
-          cta:
-            text: View Research
-            url: /research/machine-learning
+          #cta:
+           # text: View Research
+           # url: /research/machine-learning
             
         - name: Particle Engineering
           description: Advancing particle-involved processes through integrated population balance modeling (PBM) and machine learning
@@ -92,13 +92,13 @@ sections:
           team_size: 1
           publications: 0
           #funding: $1.2M DOE
-          cta:
-            text: Learn More
-            url: /research/materials-science
-      cta:
-        text: Active Research Projects
-        url: /#research
-        icon: hero/arrow-right
+          #cta:
+           # text: Learn More
+            #url: /research/materials-science
+      #cta:
+       # text: Active Research Projects
+        #url: /#research
+        #icon: hero/arrow-right
     design:
       layout: cards
       css_class: "bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800"
@@ -118,10 +118,10 @@ sections:
         #- PhD Students
       sort_by: 'Params.last_name'
       sort_ascending: true
-      cta:
-        text: View All Team Members
-        url: /authors
-        icon: user-group
+      #cta:
+       # text: View All Team Members
+        #url: /authors
+        #icon: user-group
     design:
       show_role: true
       show_organizations: false

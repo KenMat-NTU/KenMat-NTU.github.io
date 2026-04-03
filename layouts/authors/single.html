@@ -1,0 +1,340 @@
+{{ define "main" }}
+{{ $slug := .Params.author_slug }}
+{{ $author := index site.Data.authors $slug }}
+
+<div class="universal-wrapper">
+  <div class="article-container pt-3">
+
+    {{ if not $author }}
+      <h1>{{ .Title }}</h1>
+      <p>No author data found for slug <code>{{ $slug }}</code>.</p>
+      <p>Expected file: <code>data/authors/{{ $slug }}.yaml</code></p>
+    {{ else }}
+
+      <style>
+        .member-profile {
+          max-width: 1080px;
+          margin: 0 auto;
+        }
+        .member-header {
+          display: grid;
+          grid-template-columns: 260px 1fr;
+          gap: 2rem;
+          align-items: start;
+          margin-bottom: 2.5rem;
+        }
+        .member-photo img {
+          width: 100%;
+          max-width: 240px;
+          border-radius: 10px;
+          display: block;
+        }
+        .member-name {
+          margin-bottom: 0.25rem;
+          font-weight: 800;
+        }
+        .member-role {
+          font-size: 1.05rem;
+          color: #666;
+          margin-bottom: 1rem;
+        }
+        .member-affiliations > div {
+          margin-bottom: 0.25rem;
+        }
+        .member-links {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.75rem;
+          margin-top: 1rem;
+        }
+        .member-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.45rem;
+          text-decoration: none;
+          padding: 0.35rem 0.7rem;
+          border: 1px solid #ddd;
+          border-radius: 999px;
+          line-height: 1;
+        }
+        .member-link svg {
+          width: 1rem;
+          height: 1rem;
+          display: inline-block;
+          flex: 0 0 auto;
+        }
+        .profile-section {
+          margin-top: 2.2rem;
+        }
+        .profile-section h2 {
+          margin-bottom: 0.9rem;
+          border-bottom: 1px solid #ddd;
+          padding-bottom: 0.35rem;
+        }
+        .simple-list, .pub-list {
+          padding-left: 1.25rem;
+        }
+        .simple-list li, .pub-list li {
+          margin-bottom: 0.75rem;
+        }
+        .muted-inline {
+          color: #666;
+        }
+        @media (max-width: 768px) {
+          .member-header {
+            grid-template-columns: 1fr;
+          }
+          .member-photo img {
+            max-width: 180px;
+          }
+        }
+      </style>
+
+      {{ $displayName := $slug | humanize }}
+      {{ with $author.name }}
+        {{ with .display }}
+          {{ $displayName = . }}
+        {{ end }}
+      {{ end }}
+
+      {{/* Personal website from affiliations */}}
+      {{ $personalWebsite := "" }}
+      {{ with $author.affiliations }}
+        {{ range . }}
+          {{ if and .url (eq .name "Personal webpage") }}
+            {{ $personalWebsite = .url }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+
+      <div class="member-profile">
+
+        <div class="member-header">
+          <div class="member-photo">
+            {{ $imgJpg := printf "media/authors/%s.jpg" $slug }}
+            {{ $imgPng := printf "media/authors/%s.png" $slug }}
+            {{ $imgWebp := printf "media/authors/%s.webp" $slug }}
+
+            {{ with resources.Get $imgJpg }}
+              <img src="{{ .RelPermalink }}" alt="{{ $displayName }}">
+            {{ else }}
+              {{ with resources.Get $imgPng }}
+                <img src="{{ .RelPermalink }}" alt="{{ $displayName }}">
+              {{ else }}
+                {{ with resources.Get $imgWebp }}
+                  <img src="{{ .RelPermalink }}" alt="{{ $displayName }}">
+                {{ end }}
+              {{ end }}
+            {{ end }}
+          </div>
+
+          <div>
+            <h1 class="member-name"><strong>{{ $displayName }}</strong></h1>
+
+            {{ with $author.role }}
+              <div class="member-role">{{ . }}</div>
+            {{ end }}
+
+            {{ with $author.affiliations }}
+              <div class="member-affiliations">
+                {{ range . }}
+                  <div>
+                    {{ if .url }}
+                      <a href="{{ .url }}"{{ with .target }} target="{{ . }}"{{ end }}{{ with .rel }} rel="{{ . }}"{{ end }}>
+                        {{ .name }}
+                      </a>
+                    {{ else }}
+                      {{ .name }}
+                    {{ end }}
+                  </div>
+                {{ end }}
+              </div>
+            {{ end }}
+
+            {{ with $author.bio }}
+              <div class="member-bio">
+                {{ . | markdownify }}
+              </div>
+            {{ end }}
+
+            <div class="member-links">
+              {{ with $author.links }}
+                {{ range . }}
+                  {{ if .url }}
+                    {{ $icon := .icon | default "" }}
+                    {{ $label := "Link" }}
+
+                    {{ if eq $icon "hero/envelope" }}{{ $label = "Email" }}{{ end }}
+		    {{ if eq $icon "hero/globe" }}{{ $label = "Website" }}{{ end }}
+                    {{ if eq $icon "brands/google-scholar" }}{{ $label = "Scholar" }}{{ end }}
+                    {{ if eq $icon "brands/github" }}{{ $label = "GitHub" }}{{ end }}
+                    {{ if eq $icon "brands/linkedin" }}{{ $label = "LinkedIn" }}{{ end }}
+                    {{ if eq $icon "brands/orcid" }}{{ $label = "ORCID" }}{{ end }}
+                    {{ if eq $icon "brands/cv" }}{{ $label = "CV" }}{{ end }}
+                    {{ if eq $icon "brands/researchgate" }}{{ $label = "ResearchGate" }}{{ end }}
+
+                    <a class="member-link" href="{{ .url }}" target="_blank" rel="noopener">
+
+                      {{ if eq $icon "hero/envelope" }}
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                          <path d="M3 5h18a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V6a1 1 0 011-1zm17 2.24l-7.39 6.16a1 1 0 01-1.28 0L4 7.24V18h16V7.24zm-1.56-.24H5.56L12 12.36 18.44 7z"/>
+                        </svg>
+                      {{ else if eq $icon "brands/github" }}
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                          <path d="M12 .5C5.65.5.5 5.65.5 12A11.5 11.5 0 008.36 22.92c.58.1.79-.25.79-.56v-2.15c-3.2.69-3.88-1.35-3.88-1.35-.52-1.32-1.27-1.67-1.27-1.67-1.04-.7.08-.69.08-.69 1.15.08 1.75 1.18 1.75 1.18 1.02 1.76 2.68 1.25 3.34.96.1-.74.4-1.25.73-1.54-2.55-.29-5.23-1.28-5.23-5.67 0-1.25.45-2.28 1.18-3.08-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.9 10.9 0 015.74 0c2.19-1.49 3.15-1.18 3.15-1.18.62 1.59.23 2.76.11 3.05.73.8 1.18 1.83 1.18 3.08 0 4.4-2.69 5.38-5.25 5.66.41.35.78 1.04.78 2.1v3.11c0 .31.21.67.8.56A11.5 11.5 0 0023.5 12C23.5 5.65 18.35.5 12 .5z"/>
+                        </svg>
+                      {{ else if eq $icon "brands/linkedin" }}
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                          <path d="M4.98 3.5a1.75 1.75 0 11-.01 3.5 1.75 1.75 0 01.01-3.5zM3.5 8.75h2.96V20.5H3.5V8.75zM9.25 8.75h2.84v1.6h.04c.4-.75 1.37-1.84 3.31-1.84 3.54 0 4.19 2.33 4.19 5.37v6.62h-2.96v-5.87c0-1.4-.03-3.19-1.94-3.19-1.95 0-2.25 1.52-2.25 3.09v5.97H9.25V8.75z"/>
+                        </svg>
+                      {{ else if eq $icon "brands/orcid" }}
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                          <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm-4.25 4.5a1.25 1.25 0 110 2.5 1.25 1.25 0 010-2.5zm-1 4h2v7h-2v-7zm4 0h2.92c2.07 0 3.83 1.25 3.83 3.5 0 2.15-1.67 3.5-3.83 3.5h-2.92v-7zm2 1.74v3.52h.76c1.33 0 2.14-.68 2.14-1.76 0-1.13-.84-1.76-2.14-1.76h-.76z"/>
+                        </svg>
+                      {{ else if eq $icon "brands/google-scholar" }}
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                          <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zm-7 9.97V17l7 4 7-4v-4.03l-7 3.82-7-3.82z"/>
+                        </svg>
+                      {{ else if eq $icon "brands/cv" }}
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                          <path d="M6 2h9l5 5v15a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2zm8 1.5V8h4.5L14 3.5zM8 12h8v1.5H8V12zm0 3h8v1.5H8V15zm0-6h5v1.5H8V9z"/>
+                        </svg>
+                      {{ else if eq $icon "brands/researchgate" }}
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <text x="12" y="15" text-anchor="middle" font-size="8" fill="white" font-family="Arial, sans-serif">RG</text>
+                        </svg>
+                      {{ else }}
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                          <path d="M10.59 13.41a1.996 1.996 0 010-2.82l3.18-3.18a2 2 0 112.83 2.83l-1.41 1.41 1.06 1.06 1.41-1.41a3.5 3.5 0 10-4.95-4.95l-3.18 3.18a3.5 3.5 0 104.95 4.95l.71-.71-1.06-1.06-.71.71a2 2 0 01-2.83 0z"/>
+                        </svg>
+                      {{ end }}
+
+                      <span>{{ $label }}</span>
+                    </a>
+                  {{ end }}
+                {{ end }}
+              {{ end }}
+            </div>
+          </div>
+        </div>
+
+        {{ with $author.education }}
+          <section class="profile-section">
+            <h2>Education</h2>
+            <ul class="simple-list">
+              {{ range . }}
+                <li>
+                  {{ with .degree }}<strong>{{ . }}</strong>{{ end }}
+                  {{ with .institution }} — {{ . }}{{ end }}
+                  {{ with .end }} <span class="muted-inline">({{ time.AsTime . | time.Format "2006" }})</span>{{ end }}
+                </li>
+              {{ end }}
+            </ul>
+          </section>
+        {{ end }}
+
+        {{ with $author.work_experience }}
+          <section class="profile-section">
+            <h2>Work Experience</h2>
+            <ul class="simple-list">
+              {{ range . }}
+                <li>
+                  {{ with .position }}<strong>{{ . }}</strong>{{ end }}
+                  {{ with .institution }} — {{ . }}{{ end }}
+                  {{ if or .start .end }}
+                    <span class="muted-inline">
+                      (
+                      {{ with .start }}{{ time.AsTime . | time.Format "2006" }}{{ end }}
+                      {{ if and .start .end }}–{{ end }}
+                      {{ with .end }}{{ time.AsTime . | time.Format "2006" }}{{ else }}Present{{ end }}
+                      )
+                    </span>
+                  {{ end }}
+                  {{ with .summary }}<div>{{ . | markdownify }}</div>{{ end }}
+                </li>
+              {{ end }}
+            </ul>
+          </section>
+        {{ end }}
+
+        {{ with $author.interests }}
+          <section class="profile-section">
+            <h2>Research Interests</h2>
+            <ul class="simple-list">
+              {{ range . }}
+                <li>{{ . }}</li>
+              {{ end }}
+            </ul>
+          </section>
+        {{ end }}
+
+        {{/* Combine manual + automatic publications */}}
+        {{ $manualPubs := slice }}
+        {{ with $author.publications_manual }}
+          {{ $manualPubs = . }}
+        {{ end }}
+
+        {{ $autoPubs := where site.RegularPages "Section" "publication" }}
+        {{ $autoPubs = where $autoPubs "Params.authors" "intersect" (slice $slug) }}
+
+        {{ if or (gt (len $manualPubs) 0) (gt (len $autoPubs) 0) }}
+          <section class="profile-section">
+            <h2>Publications</h2>
+            <ol class="pub-list">
+              {{ range $manualPubs }}
+                <li>{{ . | markdownify }}</li>
+              {{ end }}
+
+              {{ range $autoPubs.ByDate.Reverse }}
+                <li>
+                  {{ with .Params.citation }}
+                    {{ . | markdownify }}
+                  {{ else }}
+                    {{ with .Params.publication }}
+                      {{ . | markdownify }}
+                    {{ else }}
+                      <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+                    {{ end }}
+                  {{ end }}
+                </li>
+              {{ end }}
+            </ol>
+          </section>
+        {{ end }}
+
+        {{/* Combine manual + automatic awards */}}
+        {{ $manualAwards := slice }}
+        {{ with $author.awards_manual }}
+          {{ $manualAwards = . }}
+        {{ end }}
+
+        {{ $autoAwards := where site.RegularPages "Section" "award" }}
+        {{ $autoAwards = where $autoAwards "Params.authors" "intersect" (slice $slug) }}
+
+        {{ if or (gt (len $manualAwards) 0) (gt (len $autoAwards) 0) }}
+          <section class="profile-section">
+            <h2>Awards</h2>
+            <ul class="simple-list">
+              {{ range $manualAwards }}
+                <li>{{ . | markdownify }}</li>
+              {{ end }}
+
+              {{ range $autoAwards.ByDate.Reverse }}
+                <li>
+                  {{ with .Params.citation }}
+                    {{ . | markdownify }}
+                  {{ else }}
+                    <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+                  {{ end }}
+                </li>
+              {{ end }}
+            </ul>
+          </section>
+        {{ end }}
+
+      </div>
+    {{ end }}
+  </div>
+</div>
+{{ end }}
