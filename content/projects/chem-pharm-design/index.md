@@ -1,12 +1,12 @@
 ---
-title: "Machine-learning-assisted mechanistic model development for chemical and pharmaceutical process design"
+title: "Machine-learning-assisted population balance modelling for pharmaceutical crystallisation process design"
 date: 2026-04-01
 authors: ["ken"]
 tags:
   - Pharmaceutical Engineering
   - Particle Engineering
 featured: true
-summary: "Advancing mechanistic models that can design chemical and pharmaceutical processes by integrating them with machine learning tools."
+summary: "Advancing mechanistic models that can design pharmaceutical crystallisation processes by integrating them with machine learning tools."
 image:
   filename: #featured.png
   focal_point: "Center"
